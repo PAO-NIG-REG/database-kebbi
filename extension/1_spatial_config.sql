@@ -1,4 +1,4 @@
-﻿   
+   
 --- This is for correctly setting up the orthophoto onto localhost
 UPDATE system.config_map_layer 
 SET url = 'http://localhost:8085/geoserver/kebbi/wms',
@@ -8,10 +8,10 @@ visible_in_start = TRUE,
 active = TRUE
 WHERE name='orthophoto';
 
---- This is for correctly setting up the orthophoto onto anambra land ministry server
+--- This is for correctly setting up the orthophoto onto kebbi land ministry server
 --UPDATE system.config_map_layer 
---SET url = 'http://192.168.0.6:8085/geoserver/anambra/wms',
---wms_layers= 'anambra:awka',
+--SET url = 'http://192.168.0.6:8085/geoserver/kebbi/wms',
+--wms_layers= 'kebbi:awka',
 --wms_format= 'image/jpeg',
 --visible_in_start = TRUE,
 --active = TRUE
@@ -19,14 +19,14 @@ WHERE name='orthophoto';
 
 
 ----- Existing Layer Updates ----
--- Remove layers from core SOLA that are not used by anambra, Nigeria
+-- Remove layers from core SOLA that are not used by kebbi, Nigeria
 --DELETE FROM system.config_map_layer WHERE "name" IN ('place-names', 'survey-controls', 'roads'); 
 
 
 -- Configure the new Navigation Layer
  
 
--- Setup Spatial Config for anambra, Nigeria
+-- Setup Spatial Config for kebbi, Nigeria
 -- CLEAR CADASTRE DATABASE TABLES
 DELETE FROM cadastre.spatial_value_area;
 DELETE FROM cadastre.spatial_unit;
@@ -38,7 +38,7 @@ DELETE FROM system.config_map_layer WHERE name IN ('lga', 'wards', 'sections');
 DELETE FROM cadastre.cadastre_object;
 DELETE FROM cadastre.cadastre_object_historic;
 
--- Configure the Level data for anambra, Nigeria
+-- Configure the Level data for kebbi, Nigeria
 -- add levels
 
 INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
@@ -135,7 +135,7 @@ insert into system.map_search_option(code, title, query_name, active, min_search
 
 
 -------------------------------------------- 
- --SET NEW SRID and OTHER anambra PARAMETERS
+ --SET NEW SRID and OTHER kebbi PARAMETERS
 UPDATE public.geometry_columns SET srid = 32632; 
 UPDATE application.application set location = null;
 UPDATE system.setting SET vl = '32632' WHERE "name" = 'map-srid'; 

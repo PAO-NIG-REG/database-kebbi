@@ -2,7 +2,7 @@
 REM 6 Feb 2014
 REM Windows batch script to create the SOLA database and load it 
 REM with configuration data. The scipt also de-compresses and
-REM loads the Waiheke test data.
+REM loads the Kebbie test data.
 REM
 REM The SQL files used by this batch can be generated using the
 REM extract scripts from the scripts directory. The extract
@@ -65,9 +65,9 @@ IF /I "%fillWithSampleData%"=="N" GOTO FINISH
 REM Extract the test data from the 7z archive and load it into the database. 
 echo Extracting data files...
 echo ### Extracting data files... >> %BUILD_LOG% 2>&1
-%zip_exe% e -y -o"%data_path%" "%data_path%waiheke.7z" >> %BUILD_LOG% 2>&1
+%zip_exe% e -y -o"%data_path%" "%data_path%kebbie.7z" >> %BUILD_LOG% 2>&1
 REM Use -p option if the archive is password protected as follows
-REM %zip_exe% e -y -p%archive_password% -o%data_path% %data_path%waiheke.7z >> %BUILD_LOG% 2>&1
+REM %zip_exe% e -y -p%archive_password% -o%data_path% %data_path%kebbie.7z >> %BUILD_LOG% 2>&1
 
 REM Load the SQL files containing the test data
 for %%f in (data\*.sql) do (
