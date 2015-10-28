@@ -139,7 +139,10 @@ INSERT INTO br (id, display_name, technical_type_code, feedback, description, te
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('cancel-obscuration-request', 'cancel-obscuration-request', 'sql', 'cancel-obscuration-request::::...::::...::::...::::...::::...::::...::::...::::...', NULL, '#{id}(service_id) is requested');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('cancel-relation-notification', 'cancel-relation-notification', 'sql', 'Cancel notification for the services of the application', NULL, '#{id}(application_id) is requested');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('delete-relation-notification', 'delete-relation-notification', 'sql', 'Delete notification for the services of the application', NULL, '#{id}(application_id) is requested');
-INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('generate-cofo-nr', 'generate-cofo-nr', 'sql', '...::::::::...::::::::::::::::...::::::::...', NULL, '');
+INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('generate-cofo-nr', 'generate-cofo-nr', 'sql', '...::::::::...::::::::::::::::...::::::::...', NULL, 'It accepts parameters: 
+  #{estate} = G – means that the land is granted by the Government, but is might be P , which means that the land is private , or customary owned land
+  #{zone} = first two letters of the zonal area name 
+  ');
 
 
 ALTER TABLE br ENABLE TRIGGER ALL;
@@ -1064,7 +1067,7 @@ INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('appl
 					sv.request_type_code = ''cancelProperty'') > 0
 				ELSE null
 				END AS vl FROM newFreeholdApp');
-INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('generate-cofo-nr', '2014-02-20', 'infinity', 'SELECT coalesce(system.get_setting(''system-id''), '''') || to_char(now(), ''yymm'') || trim(to_char(nextval(''administrative.cofo_nr_seq''), ''0000'')) AS vl');
+INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('generate-cofo-nr', '2014-02-20', 'infinity', 'SELECT #{zone} || ''/'' || #{estate} || ''/'' ||  to_char(now(), ''yymm'') || trim(to_char(nextval(''administrative.cofo_nr_seq''), ''0000'')) AS vl');
 
 
 ALTER TABLE br_definition ENABLE TRIGGER ALL;
