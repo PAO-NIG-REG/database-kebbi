@@ -90,7 +90,7 @@ DELETE FROM system.setting  where  "name" = 'state';
 
 insert into system.setting(name, vl, active, description) values('surveyor', 'TBU SURVEYOR NAME', true, 'Name of Surveyor');
 insert into system.setting(name, vl, active, description) values('surveyorRank', 'TBU SURVEYOR RANK', true, 'The rank of the Surveyor');
-insert into system.setting(name, vl, active, description) values('state', 'Katsina', true, 'the state');
+insert into system.setting(name, vl, active, description) values('state', 'Kebbi', true, 'the state');
 --insert into system.setting(name, vl, active, description) values('featureFloatFront', 'images/sola/front_float.svg', true, 'svg for the floating element in front page');
 --insert into system.setting(name, vl, active, description) values('featureFloatBack', 'images/sola/back_float.svg', true, 'svg for the floating element in back page');
 --insert into system.setting(name, vl, active, description) values('featureFront', 'images/sola/front.svg', true, 'svg for the background element in front page');

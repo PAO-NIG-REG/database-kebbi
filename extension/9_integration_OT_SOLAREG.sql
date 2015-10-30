@@ -58,7 +58,7 @@ UPDATE administrative.ba_unit_detail_type
  WHERE code='zone';
 
 UPDATE administrative.ba_unit_detail_type
-   SET  status='x',
+   SET  status='c',
        order_view=18
  WHERE code='LGA';
 
