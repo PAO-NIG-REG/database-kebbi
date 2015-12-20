@@ -23,9 +23,6 @@ SET search_path = administrative, pg_catalog;
 --
 
 SET SESSION AUTHORIZATION DEFAULT;
-DROP TABLE administrative.ba_unit_detail;
-DROP TABLE administrative.ba_unit_detail_type;
-
 
 ---administrative.rrr_occupancy_type ------
 --INSERT INTO ba_unit_detail_type (code, display_value, description, status, is_for, field_type, order_view) VALUES ('estate', 'Estate', 'Estate type', 'x', 'cofo', 'TEXT', 0);
@@ -289,10 +286,6 @@ ALTER TABLE cadastre.cadastre_object ENABLE TRIGGER ALL;
 
 
 ---------------------------------------------------------------------------
-DROP FUNCTION IF EXISTS administrative.get_baunit_detail(ba_unit_id character varying, detail_code character varying , is_for character varying) CASCADE;
-
-
-
 ---------------------------------------------------------------------------
 DROP VIEW application.systematic_registration_certificates;
 CREATE OR REPLACE VIEW application.systematic_registration_certificates AS 
@@ -423,4 +416,3 @@ CREATE OR REPLACE VIEW application.systematic_registration_certificates AS
 -------------------------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------
-DROP VIEW IF EXISTS cadastre.parcel_plan ;
