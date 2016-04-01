@@ -386,6 +386,7 @@ INSERT INTO setting (name, vl, active, description) VALUES ('map-south', '112392
 INSERT INTO setting (name, vl, active, description) VALUES ('map-east', '158038.360', true, 'The most east coordinate. It is used in the map control.');
 INSERT INTO setting (name, vl, active, description) VALUES ('map-north', '1489740.555', true, 'The most north coordinate. It is used in the map control.');
 INSERT INTO setting (name, vl, active, description) VALUES ('system-id', 'KE', true, 'A unique number that identifies the installed SOLA system. This unique number is used in the br that generate unique identifiers.');
+INSERT INTO setting (name, vl, active, description) VALUES ('claim_cetificate_report_url', '/reports/cert/Claim_certificate', true, 'URL to the claim certificate report, hosted on the reporting server');
 INSERT INTO setting (name, vl, active, description) VALUES ('email-msg-pswd-restore-body', 'Dear #{userFullName},<br /><br />You have requested to restore the password. If you didn''t ask for this action, just ignore this message. Otherwise, follow <a href="#{passwordRestoreLink}">this link</a> to reset your password.<br /><br />Regards,<br />SOLA OpenTenure Team', true, 'Message text for password restore');
 INSERT INTO setting (name, vl, active, description) VALUES ('email-msg-claim-withdraw-body', 'Dear #{userFirstName},<br /><br />
 Claim <a href="#{claimLink}"><b>##{claimNumber}</b></a> has been withdrawn by community recorder.<br /><br />
@@ -458,6 +459,10 @@ Upon account approval, you will receive notification message.<p></p>Your user na
 INSERT INTO setting (name, vl, active, description) VALUES ('surveyor', 'TBU SURVEYOR NAME', true, 'Name of Surveyor');
 INSERT INTO setting (name, vl, active, description) VALUES ('surveyorRank', 'TBU SURVEYOR RANK', true, 'The rank of the Surveyor');
 INSERT INTO setting (name, vl, active, description) VALUES ('state', 'Kebbi', true, 'the state');
+INSERT INTO setting (name, vl, active, description) VALUES ('ot-title-plan-crs-wkt', '', true, 'Custom Coordinate Reference System in WKT format of the map image, generated for claim certificate in OpenTenure');
+INSERT INTO setting (name, vl, active, description) VALUES ('enable-reports', '1', true, 'Indicates whether reports are enabled or disabled. 1 - enabled, 0 - disabled');
+INSERT INTO setting (name, vl, active, description) VALUES ('community-name', 'Open Community', true, 'Community name');
+INSERT INTO setting (name, vl, active, description) VALUES ('map-srid', '32632', true, 'srid for the map');
 
 
 ALTER TABLE setting ENABLE TRIGGER ALL;

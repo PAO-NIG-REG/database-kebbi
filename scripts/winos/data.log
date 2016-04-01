@@ -1,0 +1,34 @@
+Starting Extract at  9:40:21.71 
+### Dumping address tables...  
+### Dumping party tables...  
+### Dumping document tables...  
+### Dumping transaction tables...  
+### Dumping source tables...  
+### Dumping cadastre tables... 
+pg_dump: NOTICE: there are circular foreign-key constraints among these table(s):
+pg_dump:   spatial_unit_group
+pg_dump: You might not be able to restore the dump without using --disable-triggers or temporarily dropping the constraints.
+pg_dump: Consider using a full dump instead of a --data-only dump to avoid this problem.
+### Dumping administrative tables...  
+### Dumping application tables... 
+### Dumping bulk operation tables...  
+### Compressing data files... 
+
+7-Zip 9.20  Copyright (c) 1999-2010 Igor Pavlov  2010-11-18
+
+Scanning
+
+Updating archive C:\Users\rizzom\Desktop\SOLA-NIGERIA-REGISTRY\database-kebbi\scripts\winos\..\..\data\waiheke.7z
+
+Compressing  01_address.sql
+Compressing  02_party.sql
+Compressing  03_document.sql
+Compressing  04_transaction.sql
+Compressing  05_source.sql
+Compressing  06_cadastre.sql
+Compressing  07_administrative.sql
+Compressing  08_application.sql
+Compressing  09_bulk_operation.sql
+
+Everything is Ok
+Finished at  9:40:25.76 
