@@ -1,6 +1,6 @@
-﻿-- Trigger: __track_changes on application.application
+-- Trigger: __track_changes on application.application
 
--- DROP TRIGGER __track_changes ON application.application;
+DROP TRIGGER __track_changes ON application.application;
 
 CREATE TRIGGER __track_changes
   BEFORE INSERT OR UPDATE
