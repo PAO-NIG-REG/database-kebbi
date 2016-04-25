@@ -1,4 +1,4 @@
-UPDATE public.geometry_columns SET srid = 32631;
+﻿UPDATE public.geometry_columns SET srid = 32631;
 UPDATE system.crs SET srid = 32631;
 
 UPDATE system.setting SET vl = '554656' WHERE "name" = 'map-west'; 
@@ -8,11 +8,13 @@ UPDATE system.setting SET vl = '1474993' WHERE "name" = 'map-north';
 
 
 
+
+ALTER TABLE cadastre.spatial_unit_group_historic DISABLE TRIGGER ALL;
+ALTER TABLE cadastre.spatial_unit_group DISABLE TRIGGER ALL;
+
 delete  from cadastre.spatial_unit_group_historic;
 ALTER TABLE cadastre.spatial_unit_group_historic DROP CONSTRAINT IF EXISTS enforce_srid_geom;
 ALTER TABLE cadastre.spatial_unit_group_historic ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 32631);
-
-
 
 
 INSERT INTO cadastre.spatial_unit_group_historic( name,id, hierarchy_level, label,  change_user, geom) SELECT name,id, hierarchy_level, label,  change_user, ST_Transform(
@@ -139,6 +141,12 @@ $BODY$
 ALTER FUNCTION get_geometry_with_srid(geometry)
   OWNER TO postgres;
 COMMENT ON FUNCTION get_geometry_with_srid(geometry) IS 'This function assigns a srid found in the settings to the geometry passed as parameter. The srid is chosen based in the longitude where the centroid of the geometry is.';
+
+
+
+
+ALTER TABLE cadastre.spatial_unit_group_historic ENABLE TRIGGER ALL;
+ALTER TABLE cadastre.spatial_unit_group ENABLE TRIGGER ALL;
 
 
 INSERT INTO system.version SELECT '1601' WHERE NOT EXISTS (SELECT version_num FROM system.version WHERE version_num = '1601');
