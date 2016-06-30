@@ -343,8 +343,8 @@ BEGIN
            Select pippo.firstpart||'/'||pippo.lastpart || ' ' || pippo.cadtype  as value
    from 
    administrative.ba_unit bu join
-	   (select co.name_firstpart firstpart,
-	   co.name_lastpart lastpart,
+	   (select coalesce (co.name_firstpart, '') firstpart,
+	     replace(coalesce (co.name_lastpart, ''),'null', '' )lastpart,
 	    get_translation(cot.display_value, null) cadtype,
 	   bsu.ba_unit_id unit_id
 	   from administrative.ba_unit_contains_spatial_unit  bsu
@@ -363,6 +363,7 @@ BEGIN
 	if substr(name, 1, 1) = ',' then
           name = substr(name,2);
         end if;
+      
 return name;
 END;
 
@@ -2461,8 +2462,8 @@ BEGIN
 		from application.service s 
 		join application.application_property ap on (s.application_id=ap.application_id)
 		join administrative.ba_unit bu on (ap.name_firstpart||ap.name_lastpart=bu.name_firstpart||bu.name_lastpart)
-		join (select co.name_firstpart firstpart,
-			   co.name_lastpart lastpart,
+		join  (select coalesce (co.name_firstpart, '') firstpart,
+	     replace(coalesce (co.name_lastpart, ''),'null', '' )lastpart,
 			   get_translation(cot.display_value, null) cadtype,
 			   bsu.ba_unit_id unit_id,
 			   co.id id
@@ -6851,7 +6852,7 @@ CREATE TABLE application (
     CONSTRAINT application_check_assigned CHECK ((((assignee_id IS NULL) AND (assigned_datetime IS NULL)) OR ((assignee_id IS NOT NULL) AND (assigned_datetime IS NOT NULL)))),
     CONSTRAINT enforce_dims_location CHECK ((public.st_ndims(location) = 2)),
     CONSTRAINT enforce_geotype_location CHECK (((public.geometrytype(location) = 'MULTIPOINT'::text) OR (location IS NULL))),
-    CONSTRAINT enforce_srid_location CHECK ((public.st_srid(location) = 32632)),
+    CONSTRAINT enforce_srid_location CHECK ((public.st_srid(location) = 32631)),
     CONSTRAINT enforce_valid_location CHECK (public.st_isvalid(location))
 );
 
@@ -7192,7 +7193,7 @@ CREATE TABLE cadastre_object (
     intell_map_sheet character varying(255),
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
-    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 32632)),
+    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 32631)),
     CONSTRAINT enforce_valid_geom_polygon CHECK (public.st_isvalid(geom_polygon))
 );
 
@@ -7941,7 +7942,7 @@ CREATE TABLE application_historic (
     redact_code character varying(20),
     CONSTRAINT enforce_dims_location CHECK ((public.st_ndims(location) = 2)),
     CONSTRAINT enforce_geotype_location CHECK (((public.geometrytype(location) = 'MULTIPOINT'::text) OR (location IS NULL))),
-    CONSTRAINT enforce_srid_location CHECK ((public.st_srid(location) = 32632)),
+    CONSTRAINT enforce_srid_location CHECK ((public.st_srid(location) = 32631)),
     CONSTRAINT enforce_valid_location CHECK (public.st_isvalid(location))
 );
 
@@ -9523,7 +9524,7 @@ CREATE TABLE spatial_unit_temporary (
     change_user character varying(50),
     change_time timestamp without time zone DEFAULT now() NOT NULL,
     CONSTRAINT enforce_dims_geom CHECK ((public.st_ndims(geom) = 2)),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32632))
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32631))
 );
 
 
@@ -9733,7 +9734,7 @@ CREATE TABLE cadastre_object_historic (
     intell_map_sheet character varying(255),
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
-    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 32632)),
+    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 32631)),
     CONSTRAINT enforce_valid_geom_polygon CHECK (public.st_isvalid(geom_polygon))
 );
 
@@ -9755,7 +9756,7 @@ CREATE TABLE cadastre_object_node_target (
     change_time timestamp without time zone DEFAULT now() NOT NULL,
     CONSTRAINT enforce_dims_geom CHECK ((public.st_ndims(geom) = 2)),
     CONSTRAINT enforce_geotype_geom CHECK (((public.geometrytype(geom) = 'POINT'::text) OR (geom IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32632)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32631)),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom))
 );
 
@@ -9842,7 +9843,7 @@ CREATE TABLE cadastre_object_node_target_historic (
     change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL,
     CONSTRAINT enforce_dims_geom CHECK ((public.st_ndims(geom) = 2)),
     CONSTRAINT enforce_geotype_geom CHECK (((public.geometrytype(geom) = 'POINT'::text) OR (geom IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32632)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32631)),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom))
 );
 
@@ -9864,7 +9865,7 @@ CREATE TABLE cadastre_object_target (
     change_time timestamp without time zone DEFAULT now() NOT NULL,
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
-    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 32632)),
+    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 32631)),
     CONSTRAINT enforce_valid_geom_polygon CHECK (public.st_isvalid(geom_polygon))
 );
 
@@ -9951,7 +9952,7 @@ CREATE TABLE cadastre_object_target_historic (
     change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL,
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
-    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 32632)),
+    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 32631)),
     CONSTRAINT enforce_valid_geom_polygon CHECK (public.st_isvalid(geom_polygon))
 );
 
@@ -10088,8 +10089,8 @@ CREATE TABLE spatial_unit_group (
     CONSTRAINT enforce_dims_reference_point CHECK ((public.st_ndims(reference_point) = 2)),
     CONSTRAINT enforce_geotype_geom CHECK (((public.geometrytype(geom) = 'POLYGON'::text) OR (geom IS NULL))),
     CONSTRAINT enforce_geotype_reference_point CHECK (((public.geometrytype(reference_point) = 'POINT'::text) OR (reference_point IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32632)),
-    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 32632)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32631)),
+    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 32631)),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom)),
     CONSTRAINT enforce_valid_reference_point CHECK (public.st_isvalid(reference_point))
 );
@@ -10630,8 +10631,8 @@ CREATE TABLE spatial_unit (
     CONSTRAINT enforce_dims_geom CHECK ((public.st_ndims(geom) = 2)),
     CONSTRAINT enforce_dims_reference_point CHECK ((public.st_ndims(reference_point) = 2)),
     CONSTRAINT enforce_geotype_reference_point CHECK (((public.geometrytype(reference_point) = 'POINT'::text) OR (reference_point IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32632)),
-    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 32632)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32631)),
+    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 32631)),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom)),
     CONSTRAINT enforce_valid_reference_point CHECK (public.st_isvalid(reference_point))
 );
@@ -10871,8 +10872,8 @@ CREATE TABLE spatial_unit_group_historic (
     CONSTRAINT enforce_dims_reference_point CHECK ((public.st_ndims(reference_point) = 2)),
     CONSTRAINT enforce_geotype_geom CHECK (((public.geometrytype(geom) = 'POLYGON'::text) OR (geom IS NULL))),
     CONSTRAINT enforce_geotype_reference_point CHECK (((public.geometrytype(reference_point) = 'POINT'::text) OR (reference_point IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32632)),
-    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 32632)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32631)),
+    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 32631)),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom)),
     CONSTRAINT enforce_valid_reference_point CHECK (public.st_isvalid(reference_point))
 );
@@ -10903,8 +10904,8 @@ CREATE TABLE spatial_unit_historic (
     CONSTRAINT enforce_dims_geom CHECK ((public.st_ndims(geom) = 2)),
     CONSTRAINT enforce_dims_reference_point CHECK ((public.st_ndims(reference_point) = 2)),
     CONSTRAINT enforce_geotype_reference_point CHECK (((public.geometrytype(reference_point) = 'POINT'::text) OR (reference_point IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32632)),
-    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 32632)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32631)),
+    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 32631)),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom)),
     CONSTRAINT enforce_valid_reference_point CHECK (public.st_isvalid(reference_point))
 );
@@ -11161,8 +11162,8 @@ CREATE TABLE survey_point (
     CONSTRAINT enforce_dims_original_geom CHECK ((public.st_ndims(original_geom) = 2)),
     CONSTRAINT enforce_geotype_geom CHECK (((public.geometrytype(geom) = 'POINT'::text) OR (geom IS NULL))),
     CONSTRAINT enforce_geotype_original_geom CHECK (((public.geometrytype(original_geom) = 'POINT'::text) OR (original_geom IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32632)),
-    CONSTRAINT enforce_srid_original_geom CHECK ((public.st_srid(original_geom) = 32632)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32631)),
+    CONSTRAINT enforce_srid_original_geom CHECK ((public.st_srid(original_geom) = 32631)),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom)),
     CONSTRAINT enforce_valid_original_geom CHECK (public.st_isvalid(original_geom))
 );
@@ -11276,8 +11277,8 @@ CREATE TABLE survey_point_historic (
     CONSTRAINT enforce_dims_original_geom CHECK ((public.st_ndims(original_geom) = 2)),
     CONSTRAINT enforce_geotype_geom CHECK (((public.geometrytype(geom) = 'POINT'::text) OR (geom IS NULL))),
     CONSTRAINT enforce_geotype_original_geom CHECK (((public.geometrytype(original_geom) = 'POINT'::text) OR (original_geom IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32632)),
-    CONSTRAINT enforce_srid_original_geom CHECK ((public.st_srid(original_geom) = 32632)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32631)),
+    CONSTRAINT enforce_srid_original_geom CHECK ((public.st_srid(original_geom) = 32631)),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom)),
     CONSTRAINT enforce_valid_original_geom CHECK (public.st_isvalid(original_geom))
 );
