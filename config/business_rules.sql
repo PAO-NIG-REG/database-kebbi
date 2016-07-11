@@ -33,10 +33,6 @@ INSERT INTO br (id, display_name, technical_type_code, feedback, description, te
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('app-check-title-ref', 'app-check-title-ref', 'sql', 'Invalid identifier for title::::Неверный идентификатор права собственности::::معرف السند غير صحيح::::Identifiant invalide pour le titre::::::::::::Identificador inválido para o título::::::::无效的产权标志', NULL, '');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('power-of-attorney-owner-check', 'power-of-attorney-owner-check', 'sql', 'Name of person identified in Power of Attorney should match a (one of the) current owner(s)::::Имя лица указанного в доверенности должно совпадать с именем одного из владельцев.::::الاسم المحدد في الوكالة يجب ان يطابق احد اسماء المالكين::::Le nom de la personne identifiée dans la procuration doit correspondre à un des propriétaires actuels.::::::::::::Nome da pessoa identificada na Procuração deve corresponder a (um dos) atual proprietário(s)::::::::委托书中证明人的姓名应和现有所有权人相配。', NULL, '#{id}(application.service.id)');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('cadastre-object-check-name', 'cadastre-object-check-name', 'sql', 'The parcel (cadastre object) should have a valid form of description (appellation)::::Участок (кадастровый объект) должен иметь корректное описание (наименование).::::القطعة او الكائن المكاني يجب ان يكون لها  وصف او تسمية صحيحة::::La parcelle (objet cadastrale) doit avoir une forme de descriptif (appellation) valide.::::::::::::A parcela (objeto do cadastro) deve ter uma forma válida de inscrição (denominação)::::::::宗地 (地籍目标)应具有一个有效的描述形式 (名目)。', NULL, '#{id}(cadastre.cadastre_object.id) is requested');
-INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('generate-cofo-nr', 'generate-cofo-nr', 'sql', '...::::::::...::::::::::::::::...::::::::...', NULL, 'It accepts parameters: 
-  #{estate} = G – means that the land is granted by the Government, but is might be P , which means that the land is private , or customary owned land
-  #{zone} = first two letters of the zonal area name 
-  ');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('target-parcels-check-nopending', 'target-parcels-check-nopending', 'sql', 'There should be no pending changes for any of target parcels::::Целевые участки не должны иметь каких-либо незавершенных изменений.::::يجب ان لا يوجد اية تغييرات معلقة على القطعة المستهدفة::::Il ne doit pas y avoir de changement en attente pour aucune des parcelles cibles.::::::::::::Não deve haver alterações pendentes para qualquer das parcelas alvo::::::::对任何目标地块不应该有未决的变化。', NULL, '#{id}(cadastre.cadastre_object.id) is requested');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('ba_unit-spatial_unit-area-comparison', 'ba_unit-spatial_unit-area-comparison', 'sql', 'Title area should only differ from parcel area(s) by less than 1%::::Площадь недвижимости не должна отличаться от ее земельного участка более чем на 1%.::::المساحة في سند الملكية لا يجب ان تختلف باكثر من 1% من مساحة القطعة (القطع)::::La superficie indiquée sur le titre ne doit varier de plus d''1% par rapport à la superficie de la parcel.::::::::::::Área de título só deve diferir da área(s) parcela por menos de 1%::::::::财产面积与宗地面积相差应该不超过1%。', NULL, '#{id}(administrative.ba_unit.id) is requested');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('application-baunit-check-area', 'application-baunit-check-area', 'sql', 'Title has the same area as the combined area of its associated parcels::::Недвижимость должна иметь такую же площадь как все ее земельные участки.::::المساحة المعرفة في سند الملكية تساوي مجموع مساحات القطع لهذه المنطقة::::Le titre a la même superficie que la superficie combinée des parcelles qui y sont associées.::::::::::::Título tem a mesma área que a área combinada das suas parcelas associadas::::::::财产应与相关地块的合并面积一致。', NULL, '#{id}(ba_unit_id) is requested');
@@ -144,6 +140,10 @@ INSERT INTO br (id, display_name, technical_type_code, feedback, description, te
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('cancel-relation-notification', 'cancel-relation-notification', 'sql', 'Cancel notification for the services of the application', NULL, '#{id}(application_id) is requested');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('delete-relation-notification', 'delete-relation-notification', 'sql', 'Delete notification for the services of the application', NULL, '#{id}(application_id) is requested');
 INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('diagram-is-jpg', 'diagram-is-jpg', 'sql', 'Primary right created by the service must have a Diagram document attached and the Diagram must be in jpg format', NULL, '#{id}(application.service.id)');
+INSERT INTO br (id, display_name, technical_type_code, feedback, description, technical_description) VALUES ('generate-cofo-nr', 'generate-cofo-nr', 'sql', '...::::::::...::::::::::::::::...::::::::...', NULL, 'It accepts parameters: 
+  #{estate} = G – means that the land is granted by the Government, but is might be P , which means that the land is private , or customary owned land
+  #{zone} = first two letters of the zonal area name 
+  ');
 
 
 ALTER TABLE br ENABLE TRIGGER ALL;
@@ -814,6 +814,10 @@ SELECT	CASE 	WHEN (SELECT (cnt = 0) FROM checkServiceType) THEN NULL
 		ELSE FALSE
 	END AS vl');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('consolidation-extraction-file-name', '2014-09-12', 'infinity', 'select ''consolidation-'' || system.get_setting(''system-id'') || to_char(clock_timestamp(), ''-yyyy-MM-dd-HH24-MI'') as vl');
+INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('generate-process-progress-consolidate-max', '2014-09-12', 'infinity', 'select 10 
+  + 2 + (select count(*)*2 from system.consolidation_config) 
+  + 1 + (select count(*)*2 from system.br_validation where target_code=''consolidate'')
+  + 4 + (select count(*)*2 from system.consolidation_config) as vl');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('source-attach-in-transaction-allowed-type', '2014-02-20', 'infinity', 'WITH checkServiceType	AS	(SELECT COUNT(*) AS cnt FROM application.service sv1
 					INNER JOIN transaction.transaction tn ON (sv1.id = tn.from_service_id)
 					INNER JOIN source.source sc1 ON (tn.id = sc1.transaction_id)
@@ -957,10 +961,6 @@ INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('appl
 from application.application_spatial_unit  
 where application_id = #{id} and spatial_unit_id in (select spatial_unit_id from application.application_spatial_unit where application_id in (select id from application.application where status_code=''transferred''))');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('consolidation-not-again', '2014-09-12', 'infinity', 'select not records_found as vl, result from system.get_already_consolidated_records() as vl');
-INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('generate-process-progress-consolidate-max', '2014-09-12', 'infinity', 'select 10 
-  + 2 + (select count(*)*2 from system.consolidation_config) 
-  + 1 + (select count(*)*2 from system.br_validation where target_code=''consolidate'')
-  + 4 + (select count(*)*2 from system.consolidation_config) as vl');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('consolidation-db-structure-the-same', '2014-02-20', 'infinity', 'with def_of_tables as (
   select source_table_name, target_table_name, 
     (select string_agg(col_definition, ''##'') from (select column_name || '' '' 
@@ -1049,6 +1049,24 @@ WHERE 	      s.application_id::text = aa.id::text
 ;
 select 0=0 as vl
 ');
+INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('diagram-is-jpg', '2014-02-20', 'infinity', 'Select count (d.id) > 0 AS vl
+from document.document d, 
+source.source s,
+administrative.source_describes_rrr  sdr,
+administrative.rrr rrr,
+transaction.transaction t,
+application.service ser
+where s.ext_archive_id = d.id
+and s.type_code = ''cadastralSurvey''
+and upper(d.extension) = ''JPG''
+and sdr.source_id = s.id
+and sdr.rrr_id = rrr.id
+and rrr.type_code = ''ownership''
+and rrr.transaction_id = t.id 
+and t.from_service_id = ser.id
+and ser.request_type_code in (''newFreehold'',''newDigitalTitle'',''newOwnership'')
+and ser.id = #{id}
+');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('application-for-new-title-has-cancel-property-service', '2014-02-20', 'infinity', 'WITH 	newFreeholdApp	AS	(SELECT (SUM(1) > 0) AS fhCheck FROM application.service se
 				WHERE 
 				se.application_id = #{id}	AND 
@@ -1069,24 +1087,6 @@ INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('appl
 				ELSE null
 				END AS vl FROM newFreeholdApp');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('generate-cofo-nr', '2014-02-20', 'infinity', 'SELECT coalesce(#{zone}, '''') || coalesce(#{estate}, '''') ||  to_char(now(), ''yymm'') || trim(to_char(nextval(''administrative.cofo_nr_seq''), ''0000'')) AS vl');
-INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('diagram-is-jpg', '2014-02-20', 'infinity', 'Select count (d.id) > 0 AS vl
-from document.document d, 
-source.source s,
-administrative.source_describes_rrr  sdr,
-administrative.rrr rrr,
-transaction.transaction t,
-application.service ser
-where s.ext_archive_id = d.id
-and s.type_code = ''cadastralSurvey''
-and upper(d.extension) = ''JPG''
-and sdr.source_id = s.id
-and sdr.rrr_id = rrr.id
-and rrr.type_code = ''ownership''
-and rrr.transaction_id = t.id 
-and t.from_service_id = ser.id
-and ser.request_type_code in (''newFreehold'',''newDigitalTitle'',''newOwnership'')
-and ser.id = #{id}
-');
 
 
 ALTER TABLE br_definition ENABLE TRIGGER ALL;

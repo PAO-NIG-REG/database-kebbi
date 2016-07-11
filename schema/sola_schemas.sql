@@ -5354,16 +5354,14 @@ COMMENT ON SEQUENCE cofo_nr_seq IS 'Sequence number used as the basis for the Co
 
 
 --
--- Name: condition_for_rrr; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
+-- Name: lease_condition_template; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
 --
 
-CREATE TABLE condition_for_rrr (
-    id character varying(40) NOT NULL,
-    rrr_id character varying(40) NOT NULL,
-    condition_code character varying(20),
-    custom_condition_text character varying(500),
-    condition_quantity integer,
-    condition_unit character varying(15),
+CREATE TABLE lease_condition_template (
+    id character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
+    template_name character varying(250) NOT NULL,
+    rrr_type character varying(20),
+    template_text text NOT NULL,
     rowidentifier character varying(40) DEFAULT public.uuid_generate_v1() NOT NULL,
     rowversion integer DEFAULT 0 NOT NULL,
     change_action character(1) DEFAULT 'i'::bpchar NOT NULL,
@@ -5372,104 +5370,87 @@ CREATE TABLE condition_for_rrr (
 );
 
 
-ALTER TABLE administrative.condition_for_rrr OWNER TO postgres;
+ALTER TABLE administrative.lease_condition_template OWNER TO postgres;
 
 --
--- Name: TABLE condition_for_rrr; Type: COMMENT; Schema: administrative; Owner: postgres
+-- Name: TABLE lease_condition_template; Type: COMMENT; Schema: administrative; Owner: postgres
 --
 
-COMMENT ON TABLE condition_for_rrr IS 'Captures any statutory or agreed conditions in relation to an RRR. E.g. conditions of lease, etc. An RRR can have multiple conditions associated to it.
-Tags: FLOSS SOLA Extension, Change History';
-
-
---
--- Name: COLUMN condition_for_rrr.id; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON COLUMN condition_for_rrr.id IS 'Identifier for the condition.';
+COMMENT ON TABLE lease_condition_template IS 'A list of lease condions templates which can be used for creating new leases. LADM extension.';
 
 
 --
--- Name: COLUMN condition_for_rrr.rrr_id; Type: COMMENT; Schema: administrative; Owner: postgres
+-- Name: COLUMN lease_condition_template.id; Type: COMMENT; Schema: administrative; Owner: postgres
 --
 
-COMMENT ON COLUMN condition_for_rrr.rrr_id IS 'Identifier of the RRR the condition relates to.';
-
-
---
--- Name: COLUMN condition_for_rrr.condition_code; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON COLUMN condition_for_rrr.condition_code IS 'The type of condition.';
+COMMENT ON COLUMN lease_condition_template.id IS 'Identifier of the lease condition template.';
 
 
 --
--- Name: COLUMN condition_for_rrr.custom_condition_text; Type: COMMENT; Schema: administrative; Owner: postgres
+-- Name: COLUMN lease_condition_template.template_name; Type: COMMENT; Schema: administrative; Owner: postgres
 --
 
-COMMENT ON COLUMN condition_for_rrr.custom_condition_text IS 'User entered text describing the condition and/or updated or revised text obtained from the template condition text.';
-
-
---
--- Name: COLUMN condition_for_rrr.condition_quantity; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON COLUMN condition_for_rrr.condition_quantity IS 'A quantity value associted to the condition.';
+COMMENT ON COLUMN lease_condition_template.template_name IS 'Lease condition template name';
 
 
 --
--- Name: COLUMN condition_for_rrr.condition_unit; Type: COMMENT; Schema: administrative; Owner: postgres
+-- Name: COLUMN lease_condition_template.rrr_type; Type: COMMENT; Schema: administrative; Owner: postgres
 --
 
-COMMENT ON COLUMN condition_for_rrr.condition_unit IS 'The unit of measure applicable for the condition quantity.';
-
-
---
--- Name: COLUMN condition_for_rrr.rowidentifier; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON COLUMN condition_for_rrr.rowidentifier IS 'Identifies the all change records for the row in the condition_for_rrr_historic table';
+COMMENT ON COLUMN lease_condition_template.rrr_type IS 'RRR type code for filtering templates when creating new lease. Can be null.';
 
 
 --
--- Name: COLUMN condition_for_rrr.rowversion; Type: COMMENT; Schema: administrative; Owner: postgres
+-- Name: COLUMN lease_condition_template.template_text; Type: COMMENT; Schema: administrative; Owner: postgres
 --
 
-COMMENT ON COLUMN condition_for_rrr.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
-
-
---
--- Name: COLUMN condition_for_rrr.change_action; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON COLUMN condition_for_rrr.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+COMMENT ON COLUMN lease_condition_template.template_text IS 'The actual text of lease conditions';
 
 
 --
--- Name: COLUMN condition_for_rrr.change_user; Type: COMMENT; Schema: administrative; Owner: postgres
+-- Name: COLUMN lease_condition_template.rowidentifier; Type: COMMENT; Schema: administrative; Owner: postgres
 --
 
-COMMENT ON COLUMN condition_for_rrr.change_user IS 'The user id of the last person to modify the row.';
-
-
---
--- Name: COLUMN condition_for_rrr.change_time; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON COLUMN condition_for_rrr.change_time IS 'The date and time the row was last modified.';
+COMMENT ON COLUMN lease_condition_template.rowidentifier IS 'Identifies the all change records for the row in the lease_condition_template table';
 
 
 --
--- Name: condition_for_rrr_historic; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
+-- Name: COLUMN lease_condition_template.rowversion; Type: COMMENT; Schema: administrative; Owner: postgres
 --
 
-CREATE TABLE condition_for_rrr_historic (
+COMMENT ON COLUMN lease_condition_template.rowversion IS 'Sequential value indicating the number of times this row has been modified.';
+
+
+--
+-- Name: COLUMN lease_condition_template.change_action; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN lease_condition_template.change_action IS 'Indicates if the last data modification action that occurred to the row was insert (i), update (u) or delete (d).';
+
+
+--
+-- Name: COLUMN lease_condition_template.change_user; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN lease_condition_template.change_user IS 'The user id of the last person to modify the row.';
+
+
+--
+-- Name: COLUMN lease_condition_template.change_time; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN lease_condition_template.change_time IS 'The date and time the row was last modified.';
+
+
+--
+-- Name: lease_condition_template_historic; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE lease_condition_template_historic (
     id character varying(40),
-    rrr_id character varying(40),
-    condition_code character varying(20),
-    custom_condition_text character varying(500),
-    condition_quantity integer,
-    condition_unit character varying(15),
+    template_name character varying(250),
+    rrr_type character varying(20),
+    template_text text,
     rowidentifier character varying(40),
     rowversion integer,
     change_action character(1),
@@ -5479,60 +5460,7 @@ CREATE TABLE condition_for_rrr_historic (
 );
 
 
-ALTER TABLE administrative.condition_for_rrr_historic OWNER TO postgres;
-
---
--- Name: condition_type; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE condition_type (
-    code character varying(20) NOT NULL,
-    display_value character varying(500) NOT NULL,
-    description character varying(10000) NOT NULL,
-    status character(1) NOT NULL,
-    is_for character varying(20),
-    field_type character varying(20),
-    order_view character varying(20)
-);
-
-
-ALTER TABLE administrative.condition_type OWNER TO postgres;
-
---
--- Name: TABLE condition_type; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON TABLE condition_type IS 'Code list of condition types. 
-Tags: FLOSS SOLA Extension, Reference Table';
-
-
---
--- Name: COLUMN condition_type.code; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON COLUMN condition_type.code IS 'The code for the condition type.';
-
-
---
--- Name: COLUMN condition_type.display_value; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON COLUMN condition_type.display_value IS 'Displayed value of the condition type.';
-
-
---
--- Name: COLUMN condition_type.description; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON COLUMN condition_type.description IS 'The template text describing the condition.';
-
-
---
--- Name: COLUMN condition_type.status; Type: COMMENT; Schema: administrative; Owner: postgres
---
-
-COMMENT ON COLUMN condition_type.status IS 'Status of the condition type.';
-
+ALTER TABLE administrative.lease_condition_template_historic OWNER TO postgres;
 
 --
 -- Name: mortgage_isbased_in_rrr; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
@@ -6100,7 +6028,8 @@ CREATE TABLE rrr (
     rot_code character varying(255),
     advance_payment numeric(29,0),
     yearly_rent numeric(19,0),
-    review_period integer
+    review_period integer,
+    lease_conditions text
 );
 
 
@@ -6269,6 +6198,13 @@ COMMENT ON COLUMN rrr.redact_code IS 'FROM  SOLA State Land Extension: The redac
 
 
 --
+-- Name: COLUMN rrr.lease_conditions; Type: COMMENT; Schema: administrative; Owner: postgres
+--
+
+COMMENT ON COLUMN rrr.lease_conditions IS 'Lease conditions text';
+
+
+--
 -- Name: rrr_group_type; Type: TABLE; Schema: administrative; Owner: postgres; Tablespace: 
 --
 
@@ -6355,7 +6291,8 @@ CREATE TABLE rrr_historic (
     rot_code character varying(255),
     advance_payment numeric(29,0),
     yearly_rent numeric(19,0),
-    review_period integer
+    review_period integer,
+    lease_conditions text
 );
 
 
@@ -6852,7 +6789,7 @@ CREATE TABLE application (
     CONSTRAINT application_check_assigned CHECK ((((assignee_id IS NULL) AND (assigned_datetime IS NULL)) OR ((assignee_id IS NOT NULL) AND (assigned_datetime IS NOT NULL)))),
     CONSTRAINT enforce_dims_location CHECK ((public.st_ndims(location) = 2)),
     CONSTRAINT enforce_geotype_location CHECK (((public.geometrytype(location) = 'MULTIPOINT'::text) OR (location IS NULL))),
-    CONSTRAINT enforce_srid_location CHECK ((public.st_srid(location) = 32631)),
+    CONSTRAINT enforce_srid_location CHECK ((public.st_srid(location) = 32632)),
     CONSTRAINT enforce_valid_location CHECK (public.st_isvalid(location))
 );
 
@@ -7193,7 +7130,7 @@ CREATE TABLE cadastre_object (
     intell_map_sheet character varying(255),
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
-    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 32631)),
+    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 32632)),
     CONSTRAINT enforce_valid_geom_polygon CHECK (public.st_isvalid(geom_polygon))
 );
 
@@ -7942,7 +7879,7 @@ CREATE TABLE application_historic (
     redact_code character varying(20),
     CONSTRAINT enforce_dims_location CHECK ((public.st_ndims(location) = 2)),
     CONSTRAINT enforce_geotype_location CHECK (((public.geometrytype(location) = 'MULTIPOINT'::text) OR (location IS NULL))),
-    CONSTRAINT enforce_srid_location CHECK ((public.st_srid(location) = 32631)),
+    CONSTRAINT enforce_srid_location CHECK ((public.st_srid(location) = 32632)),
     CONSTRAINT enforce_valid_location CHECK (public.st_isvalid(location))
 );
 
@@ -9524,7 +9461,7 @@ CREATE TABLE spatial_unit_temporary (
     change_user character varying(50),
     change_time timestamp without time zone DEFAULT now() NOT NULL,
     CONSTRAINT enforce_dims_geom CHECK ((public.st_ndims(geom) = 2)),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32631))
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32632))
 );
 
 
@@ -9734,7 +9671,7 @@ CREATE TABLE cadastre_object_historic (
     intell_map_sheet character varying(255),
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
-    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 32631)),
+    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 32632)),
     CONSTRAINT enforce_valid_geom_polygon CHECK (public.st_isvalid(geom_polygon))
 );
 
@@ -9756,7 +9693,7 @@ CREATE TABLE cadastre_object_node_target (
     change_time timestamp without time zone DEFAULT now() NOT NULL,
     CONSTRAINT enforce_dims_geom CHECK ((public.st_ndims(geom) = 2)),
     CONSTRAINT enforce_geotype_geom CHECK (((public.geometrytype(geom) = 'POINT'::text) OR (geom IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32631)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32632)),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom))
 );
 
@@ -9843,7 +9780,7 @@ CREATE TABLE cadastre_object_node_target_historic (
     change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL,
     CONSTRAINT enforce_dims_geom CHECK ((public.st_ndims(geom) = 2)),
     CONSTRAINT enforce_geotype_geom CHECK (((public.geometrytype(geom) = 'POINT'::text) OR (geom IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32631)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32632)),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom))
 );
 
@@ -9865,7 +9802,7 @@ CREATE TABLE cadastre_object_target (
     change_time timestamp without time zone DEFAULT now() NOT NULL,
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
-    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 32631)),
+    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 32632)),
     CONSTRAINT enforce_valid_geom_polygon CHECK (public.st_isvalid(geom_polygon))
 );
 
@@ -9952,7 +9889,7 @@ CREATE TABLE cadastre_object_target_historic (
     change_time_valid_until timestamp without time zone DEFAULT now() NOT NULL,
     CONSTRAINT enforce_dims_geom_polygon CHECK ((public.st_ndims(geom_polygon) = 2)),
     CONSTRAINT enforce_geotype_geom_polygon CHECK (((public.geometrytype(geom_polygon) = 'POLYGON'::text) OR (geom_polygon IS NULL))),
-    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 32631)),
+    CONSTRAINT enforce_srid_geom_polygon CHECK ((public.st_srid(geom_polygon) = 32632)),
     CONSTRAINT enforce_valid_geom_polygon CHECK (public.st_isvalid(geom_polygon))
 );
 
@@ -10089,8 +10026,8 @@ CREATE TABLE spatial_unit_group (
     CONSTRAINT enforce_dims_reference_point CHECK ((public.st_ndims(reference_point) = 2)),
     CONSTRAINT enforce_geotype_geom CHECK (((public.geometrytype(geom) = 'POLYGON'::text) OR (geom IS NULL))),
     CONSTRAINT enforce_geotype_reference_point CHECK (((public.geometrytype(reference_point) = 'POINT'::text) OR (reference_point IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32631)),
-    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 32631)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32632)),
+    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 32632)),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom)),
     CONSTRAINT enforce_valid_reference_point CHECK (public.st_isvalid(reference_point))
 );
@@ -10631,8 +10568,8 @@ CREATE TABLE spatial_unit (
     CONSTRAINT enforce_dims_geom CHECK ((public.st_ndims(geom) = 2)),
     CONSTRAINT enforce_dims_reference_point CHECK ((public.st_ndims(reference_point) = 2)),
     CONSTRAINT enforce_geotype_reference_point CHECK (((public.geometrytype(reference_point) = 'POINT'::text) OR (reference_point IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32631)),
-    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 32631)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32632)),
+    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 32632)),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom)),
     CONSTRAINT enforce_valid_reference_point CHECK (public.st_isvalid(reference_point))
 );
@@ -10872,8 +10809,8 @@ CREATE TABLE spatial_unit_group_historic (
     CONSTRAINT enforce_dims_reference_point CHECK ((public.st_ndims(reference_point) = 2)),
     CONSTRAINT enforce_geotype_geom CHECK (((public.geometrytype(geom) = 'POLYGON'::text) OR (geom IS NULL))),
     CONSTRAINT enforce_geotype_reference_point CHECK (((public.geometrytype(reference_point) = 'POINT'::text) OR (reference_point IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32631)),
-    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 32631)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32632)),
+    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 32632)),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom)),
     CONSTRAINT enforce_valid_reference_point CHECK (public.st_isvalid(reference_point))
 );
@@ -10904,8 +10841,8 @@ CREATE TABLE spatial_unit_historic (
     CONSTRAINT enforce_dims_geom CHECK ((public.st_ndims(geom) = 2)),
     CONSTRAINT enforce_dims_reference_point CHECK ((public.st_ndims(reference_point) = 2)),
     CONSTRAINT enforce_geotype_reference_point CHECK (((public.geometrytype(reference_point) = 'POINT'::text) OR (reference_point IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32631)),
-    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 32631)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32632)),
+    CONSTRAINT enforce_srid_reference_point CHECK ((public.st_srid(reference_point) = 32632)),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom)),
     CONSTRAINT enforce_valid_reference_point CHECK (public.st_isvalid(reference_point))
 );
@@ -11162,8 +11099,8 @@ CREATE TABLE survey_point (
     CONSTRAINT enforce_dims_original_geom CHECK ((public.st_ndims(original_geom) = 2)),
     CONSTRAINT enforce_geotype_geom CHECK (((public.geometrytype(geom) = 'POINT'::text) OR (geom IS NULL))),
     CONSTRAINT enforce_geotype_original_geom CHECK (((public.geometrytype(original_geom) = 'POINT'::text) OR (original_geom IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32631)),
-    CONSTRAINT enforce_srid_original_geom CHECK ((public.st_srid(original_geom) = 32631)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32632)),
+    CONSTRAINT enforce_srid_original_geom CHECK ((public.st_srid(original_geom) = 32632)),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom)),
     CONSTRAINT enforce_valid_original_geom CHECK (public.st_isvalid(original_geom))
 );
@@ -11277,8 +11214,8 @@ CREATE TABLE survey_point_historic (
     CONSTRAINT enforce_dims_original_geom CHECK ((public.st_ndims(original_geom) = 2)),
     CONSTRAINT enforce_geotype_geom CHECK (((public.geometrytype(geom) = 'POINT'::text) OR (geom IS NULL))),
     CONSTRAINT enforce_geotype_original_geom CHECK (((public.geometrytype(original_geom) = 'POINT'::text) OR (original_geom IS NULL))),
-    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32631)),
-    CONSTRAINT enforce_srid_original_geom CHECK ((public.st_srid(original_geom) = 32631)),
+    CONSTRAINT enforce_srid_geom CHECK ((public.st_srid(geom) = 32632)),
+    CONSTRAINT enforce_srid_original_geom CHECK ((public.st_srid(original_geom) = 32632)),
     CONSTRAINT enforce_valid_geom CHECK (public.st_isvalid(geom)),
     CONSTRAINT enforce_valid_original_geom CHECK (public.st_isvalid(original_geom))
 );
@@ -18012,27 +17949,11 @@ ALTER TABLE ONLY ba_unit_type
 
 
 --
--- Name: condition_for_rrr_pkey; Type: CONSTRAINT; Schema: administrative; Owner: postgres; Tablespace: 
+-- Name: id; Type: CONSTRAINT; Schema: administrative; Owner: postgres; Tablespace: 
 --
 
-ALTER TABLE ONLY condition_for_rrr
-    ADD CONSTRAINT condition_for_rrr_pkey PRIMARY KEY (id);
-
-
---
--- Name: condition_type_display_value_unique; Type: CONSTRAINT; Schema: administrative; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY condition_type
-    ADD CONSTRAINT condition_type_display_value_unique UNIQUE (display_value);
-
-
---
--- Name: condition_type_pkey; Type: CONSTRAINT; Schema: administrative; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY condition_type
-    ADD CONSTRAINT condition_type_pkey PRIMARY KEY (code);
+ALTER TABLE ONLY lease_condition_template
+    ADD CONSTRAINT id PRIMARY KEY (id);
 
 
 --
@@ -18161,6 +18082,14 @@ ALTER TABLE ONLY source_describes_ba_unit
 
 ALTER TABLE ONLY source_describes_rrr
     ADD CONSTRAINT source_describes_rrr_pkey PRIMARY KEY (rrr_id, source_id);
+
+
+--
+-- Name: template_name_unique; Type: CONSTRAINT; Schema: administrative; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY lease_condition_template
+    ADD CONSTRAINT template_name_unique UNIQUE (template_name);
 
 
 SET search_path = application, pg_catalog;
@@ -19861,34 +19790,6 @@ CREATE INDEX ba_unit_transaction_id_fk40_ind ON ba_unit USING btree (transaction
 --
 
 CREATE INDEX ba_unit_type_code_fk38_ind ON ba_unit USING btree (type_code);
-
-
---
--- Name: condition_for_rrr_condition_code_fk85_ind; Type: INDEX; Schema: administrative; Owner: postgres; Tablespace: 
---
-
-CREATE INDEX condition_for_rrr_condition_code_fk85_ind ON condition_for_rrr USING btree (condition_code);
-
-
---
--- Name: condition_for_rrr_historic_index_on_rowidentifier; Type: INDEX; Schema: administrative; Owner: postgres; Tablespace: 
---
-
-CREATE INDEX condition_for_rrr_historic_index_on_rowidentifier ON condition_for_rrr_historic USING btree (rowidentifier);
-
-
---
--- Name: condition_for_rrr_index_on_rowidentifier; Type: INDEX; Schema: administrative; Owner: postgres; Tablespace: 
---
-
-CREATE INDEX condition_for_rrr_index_on_rowidentifier ON condition_for_rrr USING btree (rowidentifier);
-
-
---
--- Name: condition_for_rrr_rrr_id_fk86_ind; Type: INDEX; Schema: administrative; Owner: postgres; Tablespace: 
---
-
-CREATE INDEX condition_for_rrr_rrr_id_fk86_ind ON condition_for_rrr USING btree (rrr_id);
 
 
 --
@@ -21709,13 +21610,6 @@ CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON ba_unit_target FOR EAC
 -- Name: __track_changes; Type: TRIGGER; Schema: administrative; Owner: postgres
 --
 
-CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON condition_for_rrr FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
-
-
---
--- Name: __track_changes; Type: TRIGGER; Schema: administrative; Owner: postgres
---
-
 CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON mortgage_isbased_in_rrr FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
 
 
@@ -21776,6 +21670,13 @@ CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON ba_unit_detail FOR EAC
 
 
 --
+-- Name: __track_changes; Type: TRIGGER; Schema: administrative; Owner: postgres
+--
+
+CREATE TRIGGER __track_changes BEFORE INSERT OR UPDATE ON lease_condition_template FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_changes();
+
+
+--
 -- Name: __track_history; Type: TRIGGER; Schema: administrative; Owner: postgres
 --
 
@@ -21801,13 +21702,6 @@ CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON ba_unit_contains_spatia
 --
 
 CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON ba_unit_target FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
-
-
---
--- Name: __track_history; Type: TRIGGER; Schema: administrative; Owner: postgres
---
-
-CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON condition_for_rrr FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
 
 
 --
@@ -21871,6 +21765,13 @@ CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON source_describes_rrr FO
 --
 
 CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON ba_unit_detail FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
+
+
+--
+-- Name: __track_history; Type: TRIGGER; Schema: administrative; Owner: postgres
+--
+
+CREATE TRIGGER __track_history AFTER DELETE OR UPDATE ON lease_condition_template FOR EACH ROW EXECUTE PROCEDURE public.f_for_trg_track_history();
 
 
 --
@@ -22783,19 +22684,11 @@ ALTER TABLE ONLY ba_unit
 
 
 --
--- Name: condition_for_rrr_condition_code_fk85; Type: FK CONSTRAINT; Schema: administrative; Owner: postgres
+-- Name: lease_condition_template_rrr_type; Type: FK CONSTRAINT; Schema: administrative; Owner: postgres
 --
 
-ALTER TABLE ONLY condition_for_rrr
-    ADD CONSTRAINT condition_for_rrr_condition_code_fk85 FOREIGN KEY (condition_code) REFERENCES condition_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-
-
---
--- Name: condition_for_rrr_rrr_id_fk86; Type: FK CONSTRAINT; Schema: administrative; Owner: postgres
---
-
-ALTER TABLE ONLY condition_for_rrr
-    ADD CONSTRAINT condition_for_rrr_rrr_id_fk86 FOREIGN KEY (rrr_id) REFERENCES rrr(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY lease_condition_template
+    ADD CONSTRAINT lease_condition_template_rrr_type FOREIGN KEY (rrr_type) REFERENCES rrr_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --
