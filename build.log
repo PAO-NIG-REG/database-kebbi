@@ -1,4 +1,4 @@
-Starting Build at 20:02:59,87 
+Starting Build at 22:07:04,13 
 ### Running schema\drop_schemas.sql... 
 psql:schema/drop_schemas.sql:1: NOTICE:  drop cascades to 5 other objects
 DETAIL:  drop cascades to table address.address
@@ -367,4 +367,4 @@ psql:extension/08_cadastre_object_name_is_valid.sql:2: NOTICE:  constraint "enfo
 ### Running extension\10_dynamic_form.sql... 
 ### Running extension\11_new_cofo_view.sql... 
 psql:extension/11_new_cofo_view.sql:94: NOTICE:  function administrative.get_baunit_detail(pg_catalog.varchar,pg_catalog.varchar,pg_catalog.varchar) does not exist, skipping
-Finished at 20:03:22,18 
+Finished at 22:07:38,28 
