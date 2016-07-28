@@ -77,6 +77,8 @@ where co.type_code= ''parcel''  and co_int.type_code= ''parcel''
   and ST_Intersects(co.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))
   and ST_Intersects(co_int.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', 'The spatial query that retrieves Overlapping');
 INSERT INTO query (name, sql, description) VALUES ('map_search.cadastre_object_by_title', 'select distinct co.id,  ba_unit.name || '' > '' || co.name_firstpart || ''/ '' || co.name_lastpart as label,  st_asewkb(st_transform(geom_polygon, #{srid})) as the_geom from cadastre.cadastre_object  co    inner join administrative.ba_unit_contains_spatial_unit bas on co.id = bas.spatial_unit_id     inner join administrative.ba_unit on ba_unit.id = bas.ba_unit_id  where (co.status_code= ''current'' or ba_unit.status_code= ''current'') and ba_unit.name is not null   and compare_strings(#{search_string}, ba_unit.name) limit 30', NULL);
+INSERT INTO query (name, sql, description) VALUES ('SpatialResult.getgazetted', 'select id, label, st_asewkb(st_transform(geom, #{srid})) as the_geom from cadastre.spatial_unit 
+where level_id = ''gazetted'' and ST_Intersects(st_transform(geom, #{srid}), ST_SetSRID(ST_3DMakeBox(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', NULL);
 
 
 ALTER TABLE query ENABLE TRIGGER ALL;
@@ -104,6 +106,7 @@ INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, 
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('sug_lga', 'Local Government Areas', 'pojo', true, true, 90, 'lga.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getLGA', NULL, NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('sug_ward', 'Ward', 'pojo', true, true, 80, 'ward.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getWard', NULL, NULL, NULL, NULL, false, false, false);
 INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('parcels-historic-current-ba', 'Historic parcels with current titles', 'pojo', false, false, 20, 'parcel_historic_current_ba.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getParcelsHistoricWithCurrentBA', 'dynamic.informationtool.get_parcel_historic_current_ba', NULL, NULL, NULL, false, false, false);
+INSERT INTO config_map_layer (name, title, type_code, active, visible_in_start, item_order, style, url, wms_layers, wms_version, wms_format, wms_data_source, pojo_structure, pojo_query_name, pojo_query_name_for_select, shape_location, security_user, security_password, added_from_bulk_operation, use_in_public_display, use_for_ot) VALUES ('gazetted', 'gazetted', 'pojo', true, true, 1, 'generic-polygon.xml', NULL, NULL, NULL, NULL, NULL, 'theGeom:Polygon,label:""', 'SpatialResult.getgazetted', NULL, NULL, NULL, NULL, true, false, false);
 
 
 ALTER TABLE config_map_layer ENABLE TRIGGER ALL;
@@ -458,6 +461,7 @@ Upon account approval, you will receive notification message.<p></p>Your user na
 INSERT INTO setting (name, vl, active, description) VALUES ('ot-title-plan-crs-wkt', '', true, 'Custom Coordinate Reference System in WKT format of the map image, generated for claim certificate in OpenTenure');
 INSERT INTO setting (name, vl, active, description) VALUES ('enable-reports', '1', true, 'Indicates whether reports are enabled or disabled. 1 - enabled, 0 - disabled');
 INSERT INTO setting (name, vl, active, description) VALUES ('community-name', 'Open Community', true, 'Community name');
+INSERT INTO setting (name, vl, active, description) VALUES ('system-id', 'KE', true, 'A unique number that identifies the installed SOLA system. This unique number is used in the br that generate unique identifiers.');
 INSERT INTO setting (name, vl, active, description) VALUES ('offline-mode', '0', true, 'Indicates whether Community Server is connected to the Internet or not. 0 - connected, 1 - not connected');
 INSERT INTO setting (name, vl, active, description) VALUES ('map-srid', '32632', true, 'srid for the map');
 INSERT INTO setting (name, vl, active, description) VALUES ('map-west', '-120970.290', true, 'The most west coordinate. It is used in the map control.');
@@ -466,7 +470,6 @@ INSERT INTO setting (name, vl, active, description) VALUES ('map-north', '148974
 INSERT INTO setting (name, vl, active, description) VALUES ('surveyor', 'TBU SURVEYOR NAME', true, 'Name of Surveyor');
 INSERT INTO setting (name, vl, active, description) VALUES ('surveyorRank', 'TBU SURVEYOR RANK', true, 'The rank of the Surveyor');
 INSERT INTO setting (name, vl, active, description) VALUES ('state', 'Kebbi', true, 'the state');
-INSERT INTO setting (name, vl, active, description) VALUES ('system-id', 'KE', true, 'A unique number that identifies the installed SOLA system. This unique number is used in the br that generate unique identifiers.');
 
 
 ALTER TABLE setting ENABLE TRIGGER ALL;
@@ -525,8 +528,13 @@ INSERT INTO version (version_num) VALUES ('1604d');
 INSERT INTO version (version_num) VALUES ('1604e');
 INSERT INTO version (version_num) VALUES ('1606a');
 INSERT INTO version (version_num) VALUES ('1604c');
+INSERT INTO version (version_num) VALUES ('1607b');
 INSERT INTO version (version_num) VALUES ('1607a');
-
+INSERT INTO version (version_num) VALUES ('1607d');
+INSERT INTO version (version_num) VALUES ('1607e');
+INSERT INTO version (version_num) VALUES ('1607f');
+INSERT INTO version (version_num) VALUES ('1607g');
+INSERT INTO version (version_num) VALUES ('1607h');
 
 ALTER TABLE version ENABLE TRIGGER ALL;
 

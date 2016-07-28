@@ -814,10 +814,6 @@ SELECT	CASE 	WHEN (SELECT (cnt = 0) FROM checkServiceType) THEN NULL
 		ELSE FALSE
 	END AS vl');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('consolidation-extraction-file-name', '2014-09-12', 'infinity', 'select ''consolidation-'' || system.get_setting(''system-id'') || to_char(clock_timestamp(), ''-yyyy-MM-dd-HH24-MI'') as vl');
-INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('generate-process-progress-consolidate-max', '2014-09-12', 'infinity', 'select 10 
-  + 2 + (select count(*)*2 from system.consolidation_config) 
-  + 1 + (select count(*)*2 from system.br_validation where target_code=''consolidate'')
-  + 4 + (select count(*)*2 from system.consolidation_config) as vl');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('source-attach-in-transaction-allowed-type', '2014-02-20', 'infinity', 'WITH checkServiceType	AS	(SELECT COUNT(*) AS cnt FROM application.service sv1
 					INNER JOIN transaction.transaction tn ON (sv1.id = tn.from_service_id)
 					INNER JOIN source.source sc1 ON (tn.id = sc1.transaction_id)
@@ -961,6 +957,10 @@ INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('appl
 from application.application_spatial_unit  
 where application_id = #{id} and spatial_unit_id in (select spatial_unit_id from application.application_spatial_unit where application_id in (select id from application.application where status_code=''transferred''))');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('consolidation-not-again', '2014-09-12', 'infinity', 'select not records_found as vl, result from system.get_already_consolidated_records() as vl');
+INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('generate-process-progress-consolidate-max', '2014-09-12', 'infinity', 'select 10 
+  + 2 + (select count(*)*2 from system.consolidation_config) 
+  + 1 + (select count(*)*2 from system.br_validation where target_code=''consolidate'')
+  + 4 + (select count(*)*2 from system.consolidation_config) as vl');
 INSERT INTO br_definition (br_id, active_from, active_until, body) VALUES ('consolidation-db-structure-the-same', '2014-02-20', 'infinity', 'with def_of_tables as (
   select source_table_name, target_table_name, 
     (select string_agg(col_definition, ''##'') from (select column_name || '' '' 
